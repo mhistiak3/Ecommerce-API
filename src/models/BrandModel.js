@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const DataSchema = mongoose.Schema(
   {
@@ -8,6 +8,6 @@ const DataSchema = mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-const BrandModel = mongoose.model('Brand',DataSchema)
+const BrandModel = mongoose.model("Brand", DataSchema);
 
 export default BrandModel;

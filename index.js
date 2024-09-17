@@ -1,23 +1,22 @@
-const express = require("express");
-const router = require("./src/routes/api");
-const app = new express();
+import express from "express";
+import router from "./src/routes/api.js"; // Notice the .js extension
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
+import path from "path";
 
-const rateLimit = require("express-rate-limit");
-const helmet = require("helmet");
-const mongoSanitize = require("express-mongo-sanitize");
-
-const xss = require("xss-clean");
-const hpp = require("hpp");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const mongoose = require("mongoose");
-const path = require("path");
+const app = express();
 
 let URL = "mongodb://localhost:27017/mern-ecommerce";
 
 mongoose
   .connect(URL)
-  .then((res) => {
+  .then(() => {
     console.log("Database Connected");
   })
   .catch((err) => {
@@ -46,6 +45,7 @@ app.use(express.static("client/dist"));
 app.get("*", function (req, res) {
   res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
+
 const PORT = 5030;
 app.listen(PORT, function () {
   console.log(`Server start on: http://localhost:${PORT}`);
