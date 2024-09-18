@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-
+import mongoose from "mongoose";
 const DataSchema = new mongoose.Schema(
   {
     storeId: { type: String, required: true },

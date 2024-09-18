@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-
+import mongoose from "mongoose";
 const DataSchema = mongoose.Schema(
   {
     categoryName: { type: String, unique: true, required: true },

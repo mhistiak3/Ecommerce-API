@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-
+import mongoose from "mongoose";
 const DataSchema = mongoose.Schema(
   {
     img1: { type: String, required: true },

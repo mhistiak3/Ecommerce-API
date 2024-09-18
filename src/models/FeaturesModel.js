@@ -1,11 +1,9 @@
-const mongoose = require("mongoose");
-
+import mongoose from "mongoose";
 const DataSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     desc: { type: String, required: true },
     img: { type: String, required: true },
-    
   },
   { timestamps: true, versionKey: false }
 );
