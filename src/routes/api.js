@@ -10,6 +10,7 @@ import {
 import { getSlider } from "../controllers/SliderController.js";
 import {
   getProductDetails,
+  getProductList,
   getProductListByKeyWord,
   getProductListByRemerk,
   getProductListBySimiler,
@@ -32,6 +33,7 @@ router.get("/productListByCategory/:categoryId", getProductListByCategory);
 // * Slider
 router.get("/productSliderList", getSlider);
 // * Product List
+router.get("/productList", getProductList);
 router.get("/productListSimiler", getProductListBySimiler);
 router.get("/productListKeyWord", getProductListByKeyWord);
 router.get("/productListRemerk", getProductListByRemerk);
