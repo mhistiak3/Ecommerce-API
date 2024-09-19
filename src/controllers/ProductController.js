@@ -1,3 +1,4 @@
+import ProductDetailsModel from "../models/ProductDetailsModel.js";
 import ProductModel from "../models/ProductModel.js";
 
 export async function getProductList(req, res) {
@@ -55,22 +56,39 @@ export async function getProductListByKeyWord(req, res) {
   }
 }
 export async function getProductListByRemerk(req, res) {
-      try {
-        const { Remark } = req.params;
+  try {
+    const { Remark } = req.params;
 
-        const productList = await ProductModel.find({
-          remark: Remark,
-        }).populate({
-          path: "categoryID brandID",
-        });
-        res.json({
-          type: "Success",
-          data: productList,
-          total: productList.length,
-        });
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
+    const productList = await ProductModel.find({
+      remark: Remark,
+    }).populate({
+      path: "categoryID brandID",
+    });
+    res.json({
+      type: "Success",
+      data: productList,
+      total: productList.length,
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
-export async function getProductDetails(req, res) {}
+export async function getProductDetails(req, res) {
+  try {
+    const { productId } = req.params;
+
+    const productDetails = await ProductDetailsModel.findOne({
+      productID: productId,
+    }).populate({
+      path: "productID",
+    });
+    res.json({
+      type: "Success",
+      data: productDetails,
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
