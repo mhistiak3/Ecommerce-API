@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const DataSchema = new mongoose.Schema(
   {
-    productId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    productID: { type: mongoose.Schema.Types.ObjectId, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
     des: { type: String, required: true },
     rating: { type: String, required: true },
