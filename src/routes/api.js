@@ -34,9 +34,9 @@ router.get("/productListByCategory/:categoryId", getProductListByCategory);
 router.get("/productSliderList", getSlider);
 // * Product List
 router.get("/productList", getProductList);
-router.get("/productListSimiler", getProductListBySimiler);
-router.get("/productListKeyWord", getProductListByKeyWord);
-router.get("/productListRemerk", getProductListByRemerk);
+router.get("/productListSimiler/:CategoryID", getProductListBySimiler);
+router.get("/productListKeyWord/:Keyword", getProductListByKeyWord);
+router.get("/productListRemerk/:Remark", getProductListByRemerk);
 router.get("/productDetails/:productId", getProductDetails);
 
 //  * Review *
