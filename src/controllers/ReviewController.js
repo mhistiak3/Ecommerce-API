@@ -1,7 +1,7 @@
 import ReviewModel from "../models/ReviewModel.js";
 
 export async function createProductReview(req, res) {}
-export async function getProductReview(req, res) {
+export async function getProductReview(req, res,next) {
       try {
         const {productId} = req.params;
         const reviweList = await ReviewModel.find({
@@ -14,8 +14,7 @@ export async function getProductReview(req, res) {
           total:reviweList.length
         });
       } catch (error) {
-        console.log(error);
-        throw error;
+        next(error);
       }
 }
 

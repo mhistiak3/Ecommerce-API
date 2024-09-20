@@ -2,7 +2,7 @@ import UserModel from "../models/UserModel.js";
 import EmailSend from "../utility/EmailHelper.js";
 import { tokenCreate } from "../utility/TokenHelper.js";
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   try {
     const { email } = req.body;
     if (!email) {
@@ -27,12 +27,11 @@ export async function login(req, res) {
       message: "6 digit OTP send to your email, please check it.",
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+    next(error);
   }
 }
 
-export async function verifyLogin(req, res) {
+export async function verifyLogin(req, res, next) {
   try {
     const { email, otp } = req.body;
     if (!email) {
@@ -44,8 +43,7 @@ export async function verifyLogin(req, res) {
 
     // save data
     const user = await UserModel.findOne({ email, otp });
-    console.log(user);
-    
+
     if (!user) {
       throw Error("OTP is incorrect.");
     }
@@ -58,7 +56,6 @@ export async function verifyLogin(req, res) {
       token,
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+    next(error);
   }
 }

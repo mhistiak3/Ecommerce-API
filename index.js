@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import path from "path";
 import { APP_PORT } from "./src/config/index.js";
+import ErrorHandler from "./src/middlewares/ErrorHandler.js";
 
 const app = express();
 
@@ -46,6 +47,9 @@ app.use(express.static("client/dist"));
 app.get("*", function (req, res) {
   res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
+
+// Error Handler
+app.use(ErrorHandler);
 
 const PORT = process.env.PORT || APP_PORT;
 app.listen(PORT, function () {

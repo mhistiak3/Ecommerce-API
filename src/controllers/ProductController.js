@@ -1,7 +1,7 @@
 import ProductDetailsModel from "../models/ProductDetailsModel.js";
 import ProductModel from "../models/ProductModel.js";
 
-export async function getProductList(req, res) {
+export async function getProductList(req, res,next) {
   try {
     const productList = await ProductModel.find({});
     res.json({
@@ -10,11 +10,10 @@ export async function getProductList(req, res) {
       total: productList.length,
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+       next(error);
   }
 }
-export async function getProductListBySimiler(req, res) {
+export async function getProductListBySimiler(req, res,next) {
   try {
     const { CategoryID } = req.params;
 
@@ -29,11 +28,10 @@ export async function getProductListBySimiler(req, res) {
       total: productList.length,
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+         next(error);
   }
 }
-export async function getProductListByKeyWord(req, res) {
+export async function getProductListByKeyWord(req, res,next) {
   try {
     const { Keyword } = req.params;
 
@@ -51,11 +49,10 @@ export async function getProductListByKeyWord(req, res) {
       total: productList.length,
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+       next(error);
   }
 }
-export async function getProductListByRemerk(req, res) {
+export async function getProductListByRemerk(req, res,next) {
   try {
     const { Remark } = req.params;
 
@@ -70,11 +67,10 @@ export async function getProductListByRemerk(req, res) {
       total: productList.length,
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+         next(error);
   }
 }
-export async function getProductDetails(req, res) {
+export async function getProductDetails(req, res,next) {
   try {
     const { productId } = req.params;
 
@@ -88,7 +84,6 @@ export async function getProductDetails(req, res) {
       data: productDetails,
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+       next(error);
   }
 }

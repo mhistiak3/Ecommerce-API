@@ -1,6 +1,6 @@
 import ProductSliderModel from "../models/ProductSliderModel.js";
 
-export async function getSlider(req, res) {
+export async function getSlider(req, res,next) {
      try {
        const sliderList = await ProductSliderModel.find({});
        res.json({
@@ -8,7 +8,6 @@ export async function getSlider(req, res) {
          data: sliderList,
        });
      } catch (error) {
-       console.log(error);
-       throw error;
+            next(error);
      }
 }

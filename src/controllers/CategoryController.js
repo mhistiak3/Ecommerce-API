@@ -1,7 +1,7 @@
 
 import ProductModel from "../models/ProductModel.js";
 import CategoryModel from "../models/CategoryModel.js";
-export async function getCategoryList(req, res) {
+export async function getCategoryList(req, res,next) {
      try {
        const categoryList = await CategoryModel.find({});
        res.json({
@@ -9,11 +9,10 @@ export async function getCategoryList(req, res) {
          data: categoryList,
        });
      } catch (error) {
-       console.log(error);
-       throw error;
+         next(error);
      }
 }
-export async function getProductListByCategory(req, res) {
+export async function getProductListByCategory(req, res,next) {
     try {
       const categoryId = req.params.categoryId;
       const productList = await ProductModel.find({
@@ -25,7 +24,6 @@ export async function getProductListByCategory(req, res) {
         data: productList,
       });
     } catch (error) {
-      console.log(error);
-      throw error;
+        next(error);
     }
 }
