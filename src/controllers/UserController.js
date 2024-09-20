@@ -35,26 +35,43 @@ export async function verifyLogin(req, res, next) {
   try {
     const { email, otp } = req.body;
     if (!email) throw Error("No Email send");
-    if (!otp)  throw Error("No OTP send");
-    
+    if (!otp) throw Error("No OTP send");
+
     // save data
     const user = await UserModel.findOne({ email, otp });
 
-    if (!user)  throw Error("OTP is incorrect.");
-   
+    if (!user) throw Error("OTP is incorrect.");
+
     // create token
     const token = tokenCreate(email);
 
-    if(!token) throw Error("Token not get.")
- let cookieOption = {
-   expires: new Date(Date.now() + 24 * 6060 * 1000),
-   httpOnly: false,
- };
- // Set Cookies With Response
- res.cookie("token", token, cookieOption);
+    if (!token) throw Error("Token not get.");
+    let cookieOption = {
+      expires: new Date(Date.now() + 24 * 6060 * 1000),
+      httpOnly: false,
+    };
+    // Set Cookies With Response
+    res.cookie("token", token, cookieOption);
     res.json({
       type: "Success",
       token,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function logout(req, res, next) {
+  try {
+    let cookieOption = {
+      expires: new Date(Date.now() - 24 * 6060 * 1000),
+      httpOnly: false,
+    };
+    // Set Cookies With Response
+    res.cookie("token", "", cookieOption);
+    res.json({
+      type: "Success",
+      message: "Successfully logout",
     });
   } catch (error) {
     next(error);
