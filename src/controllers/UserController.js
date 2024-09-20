@@ -34,23 +34,24 @@ export async function login(req, res, next) {
 export async function verifyLogin(req, res, next) {
   try {
     const { email, otp } = req.body;
-    if (!email) {
-      throw Error("No Email send");
-    }
-    if (!otp) {
-      throw Error("No OTP send");
-    }
-
+    if (!email) throw Error("No Email send");
+    if (!otp)  throw Error("No OTP send");
+    
     // save data
     const user = await UserModel.findOne({ email, otp });
 
-    if (!user) {
-      throw Error("OTP is incorrect.");
-    }
-
+    if (!user)  throw Error("OTP is incorrect.");
+   
     // create token
     const token = tokenCreate(email);
 
+    if(!token) throw Error("Token not get.")
+ let cookieOption = {
+   expires: new Date(Date.now() + 24 * 6060 * 1000),
+   httpOnly: false,
+ };
+ // Set Cookies With Response
+ res.cookie("token", token, cookieOption);
     res.json({
       type: "Success",
       token,
