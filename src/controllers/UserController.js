@@ -1,20 +1,21 @@
 import UserModel from "../models/UserModel.js";
 import EmailSend from "../utility/EmailHelper.js";
+import { tokenCreate } from "../utility/TokenHelper.js";
 
 export async function login(req, res) {
   try {
     const { email } = req.body;
     if (!email) {
-        throw Error("No Email send")
+      throw Error("No Email send");
     }
     const code = Math.floor(10000 + Math.random() * 900000);
 
     // send email
     await EmailSend(email, code);
     // save data
-    const userExits = await UserModel.find({ email })
+    const userExits = await UserModel.find({ email });
     console.log(userExits);
-    
+
     if (userExits.length) {
       await UserModel.updateOne({ email }, { $set: { otp: code } });
     } else {
@@ -23,7 +24,7 @@ export async function login(req, res) {
 
     res.json({
       type: "Success",
-      message:"6 digit OTP send to your email, please check it."
+      message: "6 digit OTP send to your email, please check it.",
     });
   } catch (error) {
     console.log(error);
@@ -31,5 +32,33 @@ export async function login(req, res) {
   }
 }
 
+export async function verifyLogin(req, res) {
+  try {
+    const { email, otp } = req.body;
+    if (!email) {
+      throw Error("No Email send");
+    }
+    if (!otp) {
+      throw Error("No OTP send");
+    }
 
+    // save data
+    const user = await UserModel.findOne({ email, otp });
+    console.log(user);
+    
+    if (!user) {
+      throw Error("OTP is incorrect.");
+    }
 
+    // create token
+    const token = tokenCreate(email);
+
+    res.json({
+      type: "Success",
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
