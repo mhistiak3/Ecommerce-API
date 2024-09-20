@@ -9,6 +9,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import path from "path";
+import { APP_PORT } from "./src/config/index.js";
 
 const app = express();
 
@@ -46,7 +47,7 @@ app.get("*", function (req, res) {
   res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
 
-const PORT = 5030;
+const PORT = process.env.PORT || APP_PORT;
 app.listen(PORT, function () {
   console.log(`Server start on: http://localhost:${PORT}`);
 });

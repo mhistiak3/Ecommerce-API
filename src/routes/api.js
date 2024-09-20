@@ -19,6 +19,7 @@ import {
   createProductReview,
   getProductReview,
 } from "../controllers/ReviewController.js";
+import { login } from "../controllers/UserController.js";
 
 const router = express.Router();
 
@@ -45,7 +46,8 @@ router.post("/createProductReview/:productId", createProductReview);
 
 // *  *  USER RELATED ROUTES  *  * 
 // *  Auth
-router.get("/login", loginUser);
+router.post("/login", login);
+// router.post("/verifyLogin", verifyLogin);
 
 
 export default router;
