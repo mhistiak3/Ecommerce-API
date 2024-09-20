@@ -23,7 +23,6 @@ import {
 const router = express.Router();
 
 // *  *  Product Related Routes  *  *
-
 // *  Brands
 router.get("/productBrandList", getBrandList);
 router.get("/productListByBrand/:brandId", getProductListByBrand);
@@ -42,5 +41,11 @@ router.get("/productDetails/:productId", getProductDetails);
 //  * Review * 
 router.get("/productReviewList/:productId", getProductReview);
 router.post("/createProductReview/:productId", createProductReview);
+
+
+// *  *  USER RELATED ROUTES  *  * 
+// *  Auth
+router.get("/login", loginUser);
+
 
 export default router;
