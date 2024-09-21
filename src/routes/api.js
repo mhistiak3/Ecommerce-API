@@ -19,7 +19,7 @@ import {
   createProductReview,
   getProductReview,
 } from "../controllers/ReviewController.js";
-import { createProfile, login, logout, verifyLogin } from "../controllers/UserController.js";
+import { createProfile, getProfile, login, logout, verifyLogin } from "../controllers/UserController.js";
 import AuthMiddleware from "../middlewares/AuthVerification.js";
 
 const router = express.Router();
@@ -53,6 +53,8 @@ router.get("/logout",AuthMiddleware, logout);
 
 // *  Profile
 router.post("/createProfile", AuthMiddleware, createProfile);
+router.post("/updateProfile", AuthMiddleware, createProfile);
+router.get("/getProfile", AuthMiddleware, getProfile);
 
 
 

@@ -95,7 +95,6 @@ export async function createProfile(req, res, next) {
    const updatedProfile = await ProfileModel.findOneAndUpdate(
      { userID: userId }, 
      { $set: { ...userProfile } }, 
-     { new: true } 
    );
 
    if (!updatedProfile) {
@@ -107,7 +106,34 @@ export async function createProfile(req, res, next) {
 
     res.json({
       type: "Success",
-      message: "Successfully profile creted",
+      message: "Successfully profile Updated.",
+      data: updatedProfile,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+export async function getProfile(req, res, next) {
+  try {
+    const { userId } = req.headers;
+
+
+    const updatedProfile = await ProfileModel.findOne(
+      { userID: userId },
+    );
+
+    if (!updatedProfile) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Profile not found",
+      });
+    }
+
+    res.json({
+      type: "Success",
+      message: "Successfully profile Updated.",
       data: updatedProfile,
     });
   } catch (error) {
