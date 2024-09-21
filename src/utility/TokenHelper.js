@@ -1,8 +1,12 @@
 import { JWT_EXPIRE_TIME, JWT_KEY } from "../config/index.js";
-import jwt from 'jsonwebtoken'
-export function tokenCreate(email){
-    let KEY = JWT_KEY;
-    let EXPIRE = { expiresIn: JWT_EXPIRE_TIME };
-    let PAYLOAD = { email: email};
-    return jwt.sign(PAYLOAD, KEY, EXPIRE);
-}
+import jwt from "jsonwebtoken";
+export const tokenCreate = (email) =>
+  jwt.sign({ email }, JWT_KEY, { expiresIn: JWT_EXPIRE_TIME });
+
+export const tokenVerify = (token) => {
+  try {
+    return jwt.verify(token, JWT_KEY);
+  } catch (e) {
+    return null;
+  }
+};

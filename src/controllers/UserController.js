@@ -14,7 +14,6 @@ export async function login(req, res, next) {
     await EmailSend(email, code);
     // save data
     const userExits = await UserModel.find({ email });
-    console.log(userExits);
 
     if (userExits.length) {
       await UserModel.updateOne({ email }, { $set: { otp: code } });
