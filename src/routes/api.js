@@ -19,7 +19,7 @@ import {
   createProductReview,
   getProductReview,
 } from "../controllers/ReviewController.js";
-import { login, logout, verifyLogin } from "../controllers/UserController.js";
+import { createProfile, login, logout, verifyLogin } from "../controllers/UserController.js";
 import AuthMiddleware from "../middlewares/AuthVerification.js";
 
 const router = express.Router();
@@ -50,6 +50,9 @@ router.post("/createProductReview/:productId", createProductReview);
 router.post("/login", login);
 router.post("/verifyLogin", verifyLogin);
 router.get("/logout",AuthMiddleware, logout);
+
+// *  Profile
+router.post("/createProfile", AuthMiddleware, createProfile);
 
 
 

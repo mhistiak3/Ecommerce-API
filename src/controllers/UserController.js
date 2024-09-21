@@ -1,3 +1,4 @@
+import ProfileModel from "../models/ProfileModel.js";
 import UserModel from "../models/UserModel.js";
 import EmailSend from "../utility/EmailHelper.js";
 import { tokenCreate } from "../utility/TokenHelper.js";
@@ -42,7 +43,7 @@ export async function verifyLogin(req, res, next) {
     if (!user) throw Error("OTP is incorrect.");
 
     // create token
-    const token = tokenCreate(email);
+    const token = tokenCreate(email, user._id.toString());
 
     if (!token) throw Error("Token not get.");
     let cookieOption = {
@@ -51,6 +52,14 @@ export async function verifyLogin(req, res, next) {
     };
     // Set Cookies With Response
     res.cookie("token", token, cookieOption);
+
+    const existingProfile = await ProfileModel.findOne({
+      userID: user._id,
+    });
+
+    if (!existingProfile) {
+      await ProfileModel.create({ userID: user._id });
+    }
     res.json({
       type: "Success",
       token,
@@ -71,6 +80,35 @@ export async function logout(req, res, next) {
     res.json({
       type: "Success",
       message: "Successfully logout",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// * Profile *
+export async function createProfile(req, res, next) {
+  try {
+    const { userId } = req.headers;
+    const userProfile = req.body;
+
+   const updatedProfile = await ProfileModel.findOneAndUpdate(
+     { userID: userId }, 
+     { $set: { ...userProfile } }, 
+     { new: true } 
+   );
+
+   if (!updatedProfile) {
+     return res.status(404).json({
+       type: "Error",
+       message: "Profile not found",
+     });
+   }
+
+    res.json({
+      type: "Success",
+      message: "Successfully profile creted",
+      data: updatedProfile,
     });
   } catch (error) {
     next(error);
