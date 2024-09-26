@@ -42,7 +42,9 @@ export async function getProductListByKeyWord(req, res,next) {
       ],
     }).populate({
       path: "categoryID brandID",
+      select:"-_id -updatedAt -createdAt"
     });
+
     res.json({
       type: "Success",
       data: productList,
