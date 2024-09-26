@@ -26,3 +26,24 @@ export async function createWish(req, res, next) {
     next(error);
   }
 }
+
+
+export async function getWishList(req, res, next) {
+  try {
+    const { userId } = req.headers;
+
+
+    const data = {
+      userID: userId,
+    };
+
+    const wishList = await WishListModel.find(data);
+   
+    res.json({
+      type: "Success",
+      data: wishList,
+    });
+  } catch (error) {
+    next(error);
+  }
+}

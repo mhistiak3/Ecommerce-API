@@ -21,7 +21,7 @@ import {
 } from "../controllers/ReviewController.js";
 import { createProfile, getProfile, login, logout, verifyLogin } from "../controllers/UserController.js";
 import AuthMiddleware from "../middlewares/AuthVerification.js";
-import { createWish } from "../controllers/WishListController.js";
+import { createWish, getWishList } from "../controllers/WishListController.js";
 
 const router = express.Router();
 
@@ -59,6 +59,7 @@ router.get("/getProfile", AuthMiddleware, getProfile);
 
 // *  *  WishList
 router.post("/createWish", AuthMiddleware, createWish);
+router.get("/getWishList", AuthMiddleware, getWishList);
 
 
 
