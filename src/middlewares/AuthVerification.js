@@ -6,7 +6,6 @@ const AuthMiddleware = (req, res, next) => {
     token = req.cookies["token"];
   }
   const data = tokenVerify(token);
-  console.log(data);
 
   if (!data) {
     return res.status(401).json({ status: "fail", message: "Unauthorized" });

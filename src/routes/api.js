@@ -43,7 +43,7 @@ router.get("/productDetails/:productId", getProductDetails);
 
 //  * Review * 
 router.get("/productReviewList/:productId", getProductReview);
-router.post("/createProductReview/:productId", createProductReview);
+router.post("/createProductReview/:productId",AuthMiddleware, createProductReview);
 
 
 // *  *  USER RELATED ROUTES  *  * 
@@ -57,7 +57,7 @@ router.post("/createProfile", AuthMiddleware, createProfile);
 router.post("/updateProfile", AuthMiddleware, createProfile);
 router.get("/getProfile", AuthMiddleware, getProfile);
 
-// *  *  WishList
+// * WishList *  
 router.post("/createWish", AuthMiddleware, createWish);
 router.get("/getWishList", AuthMiddleware, getWishList);
 router.delete("/deleteWish/:productID", AuthMiddleware, deleteWish);
