@@ -78,3 +78,40 @@ export async function updateCart(req, res) {
     });
   }
 }
+export async function deleteCart(req, res) {
+  try {
+    const { cartId } = req.params;
+    await CartModel.deleteOne({ _id: cartId });
+
+    res.status(201).json({
+      type: "Success",
+      message: "Successfully deleted product from cart.",
+    });
+  } catch (error) {
+    console.error("Error deleting product to cart:", error);
+    res.status(500).json({
+      type: "Error",
+      message:
+        "An error occurred while trying to delete the product to the cart.",
+    });
+  }
+}
+
+export async function getCartList(req, res) {
+  try {
+    const { userId } = req.headers;
+    const data = await CartModel.find({ userId });
+
+    res.status(201).json({
+      type: "Success",
+      data,
+    });
+  } catch (error) {
+    console.error("Error deleting product to cart:", error);
+    res.status(500).json({
+      type: "Error",
+      message:
+        "An error occurred while trying to delete the product to the cart.",
+    });
+  }
+}
