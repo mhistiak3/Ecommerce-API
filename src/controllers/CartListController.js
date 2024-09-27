@@ -2,8 +2,7 @@ import CartModel from "../models/CartModel.js";
 
 export async function createCart(req, res) {
   const { userId } = req.headers;
-  let { productID, qty, color, size } = req.body; 
-
+  let { productID, qty, color, size } = req.body;
 
   if (!productID || !qty || !color || !size) {
     return res.status(400).json({
@@ -42,6 +41,34 @@ export async function createCart(req, res) {
     res.status(201).json({
       type: "Success",
       message: "Successfully added product to cart.",
+    });
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to add the product to the cart.",
+    });
+  }
+}
+
+export async function updateCart(req, res) {
+  const { cartId } = req.params;
+  let { qty } = req.body;
+
+  // Validate that qty is a positive number
+  if (qty <= 0) {
+    return res.status(400).json({
+      type: "fail",
+      message: "Quantity must be a positive number.",
+    });
+  }
+
+  try {
+    await CartModel.updateOne({ _id: cartId }, { $set: { qty: qty } });
+
+    res.status(201).json({
+      type: "Success",
+      message: "Successfully updated product to cart.",
     });
   } catch (error) {
     console.error("Error adding product to cart:", error);
