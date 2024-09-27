@@ -1,39 +1,84 @@
 import ReviewModel from "../models/ReviewModel.js";
 
 export async function createProductReview(req, res) {
-  const { userId } = req.headers;
-  const { productID, des, rating } = req.body;
-  const reviweExit = await ReviewModel.findOne({
-    productID,
-    userId,
-  });
-  if (reviweExit) {
-    return res.json({
+  const { userId } = req.headers; // Extract userId from headers
+  const { productID, des, rating } = req.body; // Extract fields from request body
+
+  // Check if essential fields are provided
+  if (!productID || !des || !rating) {
+    return res.status(400).json({
       type: "fail",
-      message: "You have already a review in this product ",
+      message: "Missing required fields: productID, description, or rating.",
     });
   }
 
-  await ReviewModel.create({ userId, productID, des, rating });
+  try {
+    // Check if a review already exists for the product by the same user
+    const reviewExists = await ReviewModel.findOne({
+      productID,
+      userId,
+    });
 
-  res.json({
-    type: "Success",
-    message: "Successfully created review.",
-  });
+    if (reviewExists) {
+      return res.status(400).json({
+        type: "fail",
+        message: "You have already submitted a review for this product.",
+      });
+    }
+
+    // Create the review if it doesn't exist
+    await ReviewModel.create({ userId, productID, des, rating });
+
+    res.status(201).json({
+      type: "Success",
+      message: "Successfully created review.",
+    });
+  } catch (error) {
+    
+    console.error("Error creating review:", error);
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to create the review.",
+    });
+  }
 }
+
 
 export async function updateProductReview(req, res) {
-  const { userId } = req.headers;
-  const { reviewId } = req.params;
-  const reqBody = req.body;
+  const { userId } = req.headers; 
+  const { reviewId } = req.params; 
+  const reqBody = req.body; 
 
-  await ReviewModel.updateOne({ _id: reviewId, userId }, { $set: reqBody });
+  try {
+    // Attempt to update the review with the given reviewId and userId
+    const updateResult = await ReviewModel.updateOne(
+      { _id: reviewId, userId }, // Find review by _id and userId
+      { $set: reqBody } // Set the fields from reqBody
+    );
 
-  res.json({
-    type: "Success",
-    message: "Successfully update review.",
-  });
+    // Check if the review was updated (matchedCount will be 0 if no matching document)
+    if (updateResult.matchedCount === 0) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Review not found or you don't have permission to update it.",
+      });
+    }
+
+    // If the update was successful, send a success response
+    res.json({
+      type: "Success",
+      message: "Successfully updated review.",
+    });
+  } catch (error) {
+    // Handle any errors that occur during the update
+    console.error("Error updating review:", error);
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to update the review.",
+    });
+  }
 }
+
 
 export async function deleteProductReview(req, res) {
   const { userId } = req.headers;
