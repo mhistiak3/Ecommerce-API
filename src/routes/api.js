@@ -24,6 +24,7 @@ import {
 import { createProfile, getProfile, login, logout, verifyLogin } from "../controllers/UserController.js";
 import AuthMiddleware from "../middlewares/AuthVerification.js";
 import { createWish, deleteWish, getWishList } from "../controllers/WishListController.js";
+import { createCart } from "../controllers/CartListController.js";
 
 const router = express.Router();
 
@@ -70,6 +71,8 @@ router.post("/createWish", AuthMiddleware, createWish);
 router.get("/getWishList", AuthMiddleware, getWishList);
 router.delete("/deleteWish/:productID", AuthMiddleware, deleteWish);
 
+// * Product Cart *  
+router.post("/createCart", AuthMiddleware, createCart);
 
 
 export default router;

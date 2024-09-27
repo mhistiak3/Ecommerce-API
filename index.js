@@ -1,5 +1,4 @@
 import express from "express";
-import router from "./src/routes/api.js"; // Notice the .js extension
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
@@ -9,6 +8,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import path from "path";
+
+import router from "./src/routes/api.js";
 import { APP_PORT } from "./src/config/index.js";
 import ErrorHandler from "./src/middlewares/ErrorHandler.js";
 

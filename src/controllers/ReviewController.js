@@ -13,7 +13,6 @@ export async function createProductReview(req, res) {
   }
 
   try {
-    // Check if a review already exists for the product by the same user
     const reviewExists = await ReviewModel.findOne({
       productID,
       userId,
@@ -26,7 +25,6 @@ export async function createProductReview(req, res) {
       });
     }
 
-    // Create the review if it doesn't exist
     await ReviewModel.create({ userId, productID, des, rating });
 
     res.status(201).json({
@@ -50,13 +48,12 @@ export async function updateProductReview(req, res) {
   const reqBody = req.body; 
 
   try {
-    // Attempt to update the review with the given reviewId and userId
+    
     const updateResult = await ReviewModel.updateOne(
-      { _id: reviewId, userId }, // Find review by _id and userId
-      { $set: reqBody } // Set the fields from reqBody
+      { _id: reviewId, userId }, 
+      { $set: reqBody }
     );
 
-    // Check if the review was updated (matchedCount will be 0 if no matching document)
     if (updateResult.matchedCount === 0) {
       return res.status(404).json({
         type: "Error",
@@ -64,7 +61,6 @@ export async function updateProductReview(req, res) {
       });
     }
 
-    // If the update was successful, send a success response
     res.json({
       type: "Success",
       message: "Successfully updated review.",

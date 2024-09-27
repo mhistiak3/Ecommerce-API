@@ -47,7 +47,7 @@ export async function verifyLogin(req, res, next) {
 
     if (!token) throw Error("Token not get.");
     let cookieOption = {
-      expires: new Date(Date.now() + 24 * 6060 * 1000),
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       httpOnly: false,
     };
     // Set Cookies With Response
@@ -92,17 +92,17 @@ export async function createProfile(req, res, next) {
     const { userId } = req.headers;
     const userProfile = req.body;
 
-   const updatedProfile = await ProfileModel.findOneAndUpdate(
-     { userID: userId }, 
-     { $set: { ...userProfile } }, 
-   );
+    const updatedProfile = await ProfileModel.findOneAndUpdate(
+      { userID: userId },
+      { $set: { ...userProfile } }
+    );
 
-   if (!updatedProfile) {
-     return res.status(404).json({
-       type: "Error",
-       message: "Profile not found",
-     });
-   }
+    if (!updatedProfile) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Profile not found",
+      });
+    }
 
     res.json({
       type: "Success",
@@ -114,15 +114,11 @@ export async function createProfile(req, res, next) {
   }
 }
 
-
 export async function getProfile(req, res, next) {
   try {
     const { userId } = req.headers;
 
-
-    const updatedProfile = await ProfileModel.findOne(
-      { userID: userId },
-    );
+    const updatedProfile = await ProfileModel.findOne({ userID: userId });
 
     if (!updatedProfile) {
       return res.status(404).json({
