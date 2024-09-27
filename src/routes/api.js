@@ -18,6 +18,7 @@ import {
 import {
   createProductReview,
   getProductReview,
+  updateProductReview,
 } from "../controllers/ReviewController.js";
 import { createProfile, getProfile, login, logout, verifyLogin } from "../controllers/UserController.js";
 import AuthMiddleware from "../middlewares/AuthVerification.js";
@@ -43,7 +44,8 @@ router.get("/productDetails/:productId", getProductDetails);
 
 //  * Review * 
 router.get("/productReviewList/:productId", getProductReview);
-router.post("/createProductReview/:productId",AuthMiddleware, createProductReview);
+router.post("/createProductReview",AuthMiddleware, createProductReview);
+router.put("/updateProductReview/:reviewId", AuthMiddleware, updateProductReview);
 
 
 // *  *  USER RELATED ROUTES  *  * 

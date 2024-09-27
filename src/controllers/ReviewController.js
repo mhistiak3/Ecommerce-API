@@ -21,6 +21,19 @@ export async function createProductReview(req, res) {
     message: "Successfully created review.",
   });
 }
+
+export async function updateProductReview(req, res) {
+  const { reviewId } = req.params;
+  const reqBody = req.body;
+
+  await ReviewModel.updateOne({ _id: reviewId }, { $set: reqBody });
+
+  res.json({
+    type: "Success",
+    message: "Successfully update review.",
+  });
+}
+
 export async function getProductReview(req, res, next) {
   try {
     const { productId } = req.params;
