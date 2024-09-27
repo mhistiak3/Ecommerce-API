@@ -17,6 +17,7 @@ import {
 } from "../controllers/ProductController.js";
 import {
   createProductReview,
+  deleteProductReview,
   getProductReview,
   updateProductReview,
 } from "../controllers/ReviewController.js";
@@ -46,6 +47,11 @@ router.get("/productDetails/:productId", getProductDetails);
 router.get("/productReviewList/:productId", getProductReview);
 router.post("/createProductReview",AuthMiddleware, createProductReview);
 router.put("/updateProductReview/:reviewId", AuthMiddleware, updateProductReview);
+router.delete(
+  "/deleteProductReview/:reviewId",
+  AuthMiddleware,
+  deleteProductReview
+);
 
 
 // *  *  USER RELATED ROUTES  *  * 
