@@ -8,7 +8,7 @@ const DataSchema = new mongoose.Schema(
     tranId: { type: String, required: true },
     valId: { type: String, required: true },
     deliveryStatus: { type: String, required: true },
-    payementStatus: { type: String, required: true },
+    paymentStatus: { type: String, required: true },
     total: { type: String, required: true },
     vat: { type: String, required: true },
   },

@@ -25,6 +25,7 @@ import { createProfile, getProfile, login, logout, verifyLogin } from "../contro
 import AuthMiddleware from "../middlewares/AuthVerification.js";
 import { createWish, deleteWish, getWishList } from "../controllers/WishListController.js";
 import { createCart, deleteCart, getCartList, updateCart } from "../controllers/CartListController.js";
+import { createInvoice } from "../controllers/InvoiceController.js";
 
 const router = express.Router();
 
@@ -76,6 +77,9 @@ router.post("/createCart", AuthMiddleware, createCart);
 router.put("/updateCart/:cartId", AuthMiddleware, updateCart);
 router.delete("/deleteCart/:cartId", AuthMiddleware, deleteCart);
 router.get("/getCartList", AuthMiddleware, getCartList);
+
+// * Invoice * 
+router.post("/createInvoice", AuthMiddleware, createInvoice);
 
 
 export default router;

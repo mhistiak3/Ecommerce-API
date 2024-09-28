@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 const DataSchema = new mongoose.Schema(
   {
-    productID: { type: mongoose.Schema.Types.ObjectId, required: true },
+    productID: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Product",
+    },
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
     color: { type: String, required: true },
     qty: { type: String, required: true },
