@@ -129,10 +129,10 @@ export const createInvoice = async (req, res) => {
     form.append("total_amount", totalPayable);
     form.append("currency", currency);
     form.append("tran_id", tranId);
-    form.append("success_url", successURL);
-    form.append("fail_url", failURL);
-    form.append("cancel_url", cancelURL);
-    form.append("ipn_url", ipnURL);
+    form.append("success_url", `${successURL}/${tranId}`);
+    form.append("fail_url", `${failURL}/${tranId}`);
+    form.append("cancel_url", `${cancelURL}/${tranId}`);
+    form.append("ipn_url", `${ipnURL}/${tranId}`);
 
     // Append Customer related Info
     form.append("cus_name", profile?.customerName);
@@ -187,6 +187,63 @@ export const createInvoice = async (req, res) => {
     res.status(500).json({
       type: "Error",
       message: "An error occurred while trying to create invoice.",
+    });
+  }
+};
+
+// Payment Success
+export const paymentSuccess = async (req, res) => {
+  try {
+    const { tranId } = req.params;
+
+    // Ensure `tranId` is provided
+    if (!tranId) {
+      return res.status(400).json({
+        type: "Error",
+        message: "Transaction ID is missing.",
+      });
+    }
+    // Check if the invoice exists and payment is still pending
+    const invoice = await InvoiceModel.findOne({ tranId });
+
+    if (!invoice) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Invoice not found for the provided transaction ID.",
+      });
+    }
+
+    if (invoice.paymentStatus === "success") {
+      return res.status(400).json({
+        type: "Error",
+        message:
+          "Payment has already been marked as successful for this invoice.",
+      });
+    }
+
+    // Update the invoice's payment status to 'success'
+    await InvoiceModel.updateOne(
+      { tranId },
+      {
+        $set: {
+          paymentStatus: "success",
+        },
+      } // Update valId if provided
+    );
+
+    res.json({
+      type: "Success",
+      message: "Payment successfully processed and invoice updated.",
+      invoiceId: invoice._id,
+      paymentStatus: "success",
+    });
+  } catch (error) {
+    // Log the error and send an error response
+    console.error("Error in paymentSuccess:", error);
+
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to process the payment success.",
     });
   }
 };
