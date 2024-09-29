@@ -247,3 +247,114 @@ export const paymentSuccess = async (req, res) => {
     });
   }
 };
+
+// Payment Fail
+export const paymentFail = async (req, res) => {
+  try {
+    const { tranId } = req.params;
+
+    // Ensure `tranId` is provided
+    if (!tranId) {
+      return res.status(400).json({
+        type: "Error",
+        message: "Transaction ID is missing.",
+      });
+    }
+    // Check if the invoice exists and payment is still pending
+    const invoice = await InvoiceModel.findOne({ tranId });
+
+    if (!invoice) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Invoice not found for the provided transaction ID.",
+      });
+    }
+
+    if (invoice.paymentStatus === "fail") {
+      return res.status(400).json({
+        type: "Error",
+        message: "Payment has already been marked as fail for this invoice.",
+      });
+    }
+
+    // Update the invoice's payment status to 'fail'
+    await InvoiceModel.updateOne(
+      { tranId },
+      {
+        $set: {
+          paymentStatus: "fail",
+        },
+      } // Update valId if provided
+    );
+
+    res.json({
+      type: "Success",
+      message: "Payment fail processed and invoice updated.",
+      invoiceId: invoice._id,
+      paymentStatus: "fail",
+    });
+  } catch (error) {
+    // Log the error and send an error response
+    console.error("Error in paymentfail:", error);
+
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to process the payment fail.",
+    });
+  }
+};
+
+export const paymentCancel = async (req, res) => {
+  try {
+    const { tranId } = req.params;
+
+    // Ensure `tranId` is provided
+    if (!tranId) {
+      return res.status(400).json({
+        type: "Error",
+        message: "Transaction ID is missing.",
+      });
+    }
+    // Check if the invoice exists and payment is still pending
+    const invoice = await InvoiceModel.findOne({ tranId });
+
+    if (!invoice) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Invoice not found for the provided transaction ID.",
+      });
+    }
+
+    if (invoice.paymentStatus === "cancel") {
+      return res.status(400).json({
+        type: "Error",
+        message: "Payment has already been marked as cancel for this invoice.",
+      });
+    }
+
+    // Update the invoice's payment status to 'cancel'
+    await InvoiceModel.updateOne(
+      { tranId },
+      {
+        $set: {
+          paymentStatus: "cancel",
+        },
+      } // Update valId if provided
+    );
+
+    res.json({
+      type: "Success",
+      message: "Payment cancel processed and invoice updated.",
+      invoiceId: invoice._id,
+      paymentStatus: "cancel",
+    });
+  } catch (error) {
+    // Log the error and send an error response
+    console.error("Error in paymentcancel:", error);
+
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to process the payment cancel.",
+    });
+  }
+};
