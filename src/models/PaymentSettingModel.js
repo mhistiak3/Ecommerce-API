@@ -13,6 +13,6 @@ const DataSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-const PaymentModel = mongoose.model("Payment", DataSchema);
+const PaymentSettingModel = mongoose.model("PaymentSetting", DataSchema);
 
-export default PaymentModel;
+export default PaymentSettingModel;
