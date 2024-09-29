@@ -16,11 +16,15 @@ export const createInvoice = async (req, res) => {
     const productsFromCart = await CartModel.find({ userId }).populate({
       path: "productID",
     });
+
+    // If cart is empty, return failed response
     if (productsFromCart.length === 0) {
-      return res.json({ type: "failed" });
+      return res
+        .status(400)
+        .json({ type: "failed", message: "Cart is empty." });
     }
 
-    // Calculate the total payable amount based on product prices and quantities
+    // Calculate total amount based on product prices and quantities
     let payAmount = productsFromCart.reduce((acc, product) => {
       const price = product.productID.discount
         ? product.productID.discountPrice
@@ -30,11 +34,23 @@ export const createInvoice = async (req, res) => {
 
     // Calculate VAT (5% of the payable amount)
     let vat = payAmount * 0.05;
-    // Total amount to be paid including VAT
     let totalPayable = payAmount + vat;
 
     // ======= * STEP-2: Retrieve customer and shipping details * ==========
     const profile = await ProfileModel.findOne({ userID: userId });
+
+    // Validate customer profile data
+    if (
+      !profile ||
+      !profile.customerName ||
+      !profile.customerAddress ||
+      !email
+    ) {
+      return res.status(400).json({
+        type: "failed",
+        message: "Missing required customer details.",
+      });
+    }
 
     // Construct customer details string
     let customerDetails = `Name: ${profile?.customerName}, Email: ${email}, Address: ${profile?.customerAddress}, Phone: ${profile?.customerPhone}`;
@@ -43,13 +59,13 @@ export const createInvoice = async (req, res) => {
     let shipDetails = `Name: ${profile?.shipName}, City: ${profile?.shipCity}, Address: ${profile?.shipAddress}, Phone: ${profile?.shipPhone}`;
 
     // ======= * STEP-3: Prepare invoice transaction details * ==========
-    const tranId = Math.floor(10000000 + Math.random() * 90000000); // Generate a unique transaction ID
+    const tranId = Math.floor(10000000 + Math.random() * 90000000); // Generate unique transaction ID
     let validationId = 0; // Placeholder for validation ID
-    let deliveryStatus = "pending"; // Initial delivery status
-    let paymentStatus = "pending"; // Initial payment status
+    let deliveryStatus = "pending";
+    let paymentStatus = "pending";
 
     // ======= * STEP-4: Create the invoice * ==========
-    const createInvoice = await InvoiceModel.create({
+    const createdInvoice = await InvoiceModel.create({
       userId,
       payable: payAmount,
       customerDetails,
@@ -62,10 +78,10 @@ export const createInvoice = async (req, res) => {
       vat,
     });
 
-    // ======= * STEP-5: Create invoice products * ==========
-    const invoiceId = createInvoice?._id; // Retrieve the created invoice ID
+    // Retrieve invoice ID after creation
+    const invoiceId = createdInvoice?._id;
 
-    // Create invoice products based on cart items
+    // ======= * STEP-5: Create invoice products * ==========
     await Promise.all(
       productsFromCart.map(async (product) => {
         await InvoiceProductModel.create({
@@ -85,9 +101,15 @@ export const createInvoice = async (req, res) => {
     // Remove items from the cart after invoice creation
     await CartModel.deleteMany({ userId });
 
-    // ======= * STEP-6: Payment Setting * ==========
+    // ======= * STEP-6: Payment Setting and SSLCommerz Integration * ==========
+    const paymentSetting = await PaymentSettingModel.findOne({});
+    if (!paymentSetting) {
+      return res.status(500).json({
+        type: "failed",
+        message: "Payment settings not configured.",
+      });
+    }
 
-    const paymentSatting = await PaymentSettingModel.find({});
     const {
       storeId,
       storePassword,
@@ -97,11 +119,11 @@ export const createInvoice = async (req, res) => {
       cancelURL,
       ipnURL,
       initURL,
-    } = paymentSatting[0];
+    } = paymentSetting;
+
     const form = new FormData();
 
-
-    // Payment related Info
+    // Append Payment related Info
     form.append("store_id", storeId);
     form.append("store_passwd", storePassword);
     form.append("total_amount", totalPayable);
@@ -112,19 +134,19 @@ export const createInvoice = async (req, res) => {
     form.append("cancel_url", cancelURL);
     form.append("ipn_url", ipnURL);
 
-    // Customer related Info
+    // Append Customer related Info
     form.append("cus_name", profile?.customerName);
     form.append("cus_email", email);
     form.append("cus_add1", profile?.customerAddress);
     form.append("cus_city", profile?.customerCity);
-    form.append("cus_postcode", profile?.customerPostCode);
+    form.append("cus_postcode", profile?.customerPostCode || "N/A");
     form.append("cus_country", profile?.customerCountry);
     form.append("cus_phone", profile?.customerPhone);
 
-    // shiping related Info
+    // Append Shipping related Info
     form.append("shipping_method", "YES");
     form.append("num_of_item", productsFromCart.length);
-    form.append("weight_of_items", 0.5);
+    form.append("weight_of_items", 0.5); // Assuming 0.5kg per order
     form.append("logistic_pickup_id", 545);
     form.append("logistic_delivery_type", "COD");
     form.append("ship_name", profile?.shipName);
@@ -132,17 +154,31 @@ export const createInvoice = async (req, res) => {
     form.append("ship_city", profile?.shipCity);
     form.append("ship_country", profile?.shipCountry);
 
-    // Product related Info
+    // Append Product related Info
     form.append("product_name", "Computer Accessories");
     form.append("product_category", "Electronic");
     form.append("product_profile", "physical-goods");
 
-    // ===== * STEP-6: Send Request To SSL Commerz * =====
-    const SSLRes = await axios.post(initURL, form);
+    // Set multipart/form-data headers
+    const formHeaders = form.getHeaders();
+
+    // ===== * STEP-7: Send Request To SSL Commerz * =====
+    const SSLRes = await axios.post(initURL, form, { headers: formHeaders });
+
+    // Check response from SSLCommerz
+    if (SSLRes.data.status !== "SUCCESS") {
+      console.error("SSLCommerz Payment Error:", SSLRes.data);
+      return res.status(400).json({
+        type: "failed",
+        message: "Payment failed",
+        data: SSLRes.data,
+      });
+    }
 
     // Send success response
     res.json({
       type: "success",
+      message: "Invoice created and payment initiated successfully.",
       data: SSLRes.data,
     });
   } catch (error) {
