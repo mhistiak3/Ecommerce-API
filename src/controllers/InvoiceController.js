@@ -380,14 +380,12 @@ export const paymentIPN = async (req, res) => {
           `Payment has already been marked as ${status} for this invoice.`,
       });
     }
-
     await InvoiceModel.updateOne(
-      { tranId },
-      {
+      { tranId }, {
         $set: {
           paymentStatus: status,
         },
-      } // Update valId if provided
+      } 
     );
 
     res.json({
@@ -401,6 +399,62 @@ export const paymentIPN = async (req, res) => {
     res.status(500).json({
       type: "Error",
       message: "An error occurred while trying to process the payment cancel.",
+    });
+  }
+};
+
+// Invoice List
+export const getInvoiceList = async (req, res) => {
+  try {
+    const { userId } = req.headers;
+    const invoices = await InvoiceModel.find({ userId });
+    if (invoices.length ===0) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Invoice not found.",
+      });
+    }
+    res.json({
+      type: "Success",
+      data: invoices,
+    });
+  } catch (error) {
+    console.error("Error in: ", error);
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to fetch invoices.",
+    });
+  }
+};
+
+
+// Invoice Product List
+export const getInvoiceProductList = async (req, res) => {
+  try {
+    const { userId } = req.headers;
+    const { invoiceId } = req.params
+    // 01860773350
+    const invoicesProductList = await InvoiceProductModel.find({
+      userId,
+      invoiceId,
+    }).populate({
+      path: "productId",
+    });
+    if (invoicesProductList.length === 0) {
+      return res.status(404).json({
+        type: "Error",
+        message: "Invoice Product not found.",
+      });
+    }
+    res.json({
+      type: "Success",
+      data: invoicesProductList,
+    });
+  } catch (error) {
+    console.error("Error in: ", error);
+    res.status(500).json({
+      type: "Error",
+      message: "An error occurred while trying to fetch invoice product.",
     });
   }
 };

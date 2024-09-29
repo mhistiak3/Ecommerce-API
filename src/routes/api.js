@@ -25,7 +25,7 @@ import { createProfile, getProfile, login, logout, verifyLogin } from "../contro
 import AuthMiddleware from "../middlewares/AuthVerification.js";
 import { createWish, deleteWish, getWishList } from "../controllers/WishListController.js";
 import { createCart, deleteCart, getCartList, updateCart } from "../controllers/CartListController.js";
-import { createInvoice, paymentCancel, paymentFail, paymentIPN, paymentSuccess } from "../controllers/InvoiceController.js";
+import { createInvoice, getInvoiceList, getInvoiceProductList, paymentCancel, paymentFail, paymentIPN, paymentSuccess } from "../controllers/InvoiceController.js";
 
 const router = express.Router();
 
@@ -80,6 +80,12 @@ router.get("/getCartList", AuthMiddleware, getCartList);
 
 // * Invoice * 
 router.post("/createInvoice", AuthMiddleware, createInvoice);
+router.get("/getInvoiceList", AuthMiddleware, getInvoiceList);
+router.get(
+  "/getInvoiceProductList/:invoiceId",
+  AuthMiddleware,
+  getInvoiceProductList
+);
 
 // Payment
 router.post("/paymentSuccess/:tranId", AuthMiddleware, paymentSuccess);

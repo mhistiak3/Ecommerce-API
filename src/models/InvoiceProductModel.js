@@ -3,7 +3,11 @@ const DataSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
     invoiceId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    productId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Product",
+    },
     qty: { type: String, required: true },
     price: { type: String, required: true },
     color: { type: String, required: true },
